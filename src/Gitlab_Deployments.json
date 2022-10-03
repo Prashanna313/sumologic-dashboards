@@ -1,0 +1,427 @@
+{
+    "type": "DashboardV2SyncDefinition",
+    "name": "Gitlab Deployments",
+    "description": "The Gitlab - Deployments dashboard provides the detailed count of failed and successful status of deployments in various environments like production, staging, and test. It also provides the comparison of statuses as well as the visual representation of the successful deploys.",
+    "title": "Gitlab Deployments",
+    "theme": "Dark",
+    "topologyLabelMap": {
+        "data": {}
+    },
+    "refreshInterval": 0,
+    "timeRange": {
+        "type": "BeginBoundedTimeRange",
+        "from": {
+            "type": "RelativeTimeRangeBoundary",
+            "relativeTime": "-1d"
+        },
+        "to": null
+    },
+    "layout": {
+        "layoutType": "Grid",
+        "layoutStructures": [
+            {
+                "key": "panelpane-a61ff3eb836e5b49",
+                "structure": "{\"height\":1,\"width\":8,\"x\":8,\"y\":0}"
+            },
+            {
+                "key": "panelpane-aeee875196278a4b",
+                "structure": "{\"height\":1,\"width\":8,\"x\":16,\"y\":0}"
+            },
+            {
+                "key": "panelpane-623932b492440a4b",
+                "structure": "{\"height\":6,\"width\":4,\"x\":0,\"y\":1}"
+            },
+            {
+                "key": "panelpane-17d3c1c89c2bb941",
+                "structure": "{\"height\":6,\"width\":4,\"x\":4,\"y\":1}"
+            },
+            {
+                "key": "panelpane-1c332668885eba46",
+                "structure": "{\"height\":6,\"width\":4,\"x\":16,\"y\":1}"
+            },
+            {
+                "key": "panelpane-73393821bffdaa43",
+                "structure": "{\"height\":6,\"width\":4,\"x\":20,\"y\":1}"
+            },
+            {
+                "key": "panelpane-0d93214c8ee8da47",
+                "structure": "{\"height\":5,\"width\":24,\"x\":0,\"y\":12}"
+            },
+            {
+                "key": "panelB808D7FDA4D05943",
+                "structure": "{\"height\":4,\"width\":11,\"x\":0,\"y\":8}"
+            },
+            {
+                "key": "panel256178D9A86C2B40",
+                "structure": "{\"height\":1,\"width\":11,\"x\":0,\"y\":7}"
+            },
+            {
+                "key": "panelDAB187F1811CC94B",
+                "structure": "{\"height\":1,\"width\":8,\"x\":0,\"y\":0}"
+            },
+            {
+                "key": "panel71423A0CAF296845",
+                "structure": "{\"height\":6,\"width\":4,\"x\":12,\"y\":1}"
+            },
+            {
+                "key": "panel64830586A2368848",
+                "structure": "{\"height\":6,\"width\":4,\"x\":8,\"y\":1}"
+            },
+            {
+                "key": "panelPANE-6D651D7FA9CF494E",
+                "structure": "{\"height\":5,\"width\":13,\"x\":11,\"y\":7}"
+            }
+        ]
+    },
+    "panels": [
+        {
+            "id": null,
+            "key": "panelpane-a61ff3eb836e5b49",
+            "title": "Production",
+            "visualSettings": "{\"general\":{\"mode\":\"TextPanel\",\"type\":\"text\",\"displayType\":\"default\",\"outlierBandColor\":\"#FDECF5\",\"outlierBandMarkerColor\":\"#ED3CPE\",\"outlierBandFillOpacity\":0.15,\"outlierBandLineThickness\":2,\"outlierBandMarkerSize\":10,\"outlierBandMarkerType\":\"triangle\"},\"title\":{\"fontSize\":16}}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "TextPanel",
+            "text": ""
+        },
+        {
+            "id": null,
+            "key": "panelpane-aeee875196278a4b",
+            "title": "Staging",
+            "visualSettings": "{\"general\":{\"mode\":\"TextPanel\",\"type\":\"text\",\"displayType\":\"default\",\"outlierBandColor\":\"#FDECF5\",\"outlierBandMarkerColor\":\"#ED3CPE\",\"outlierBandFillOpacity\":0.15,\"outlierBandLineThickness\":2,\"outlierBandMarkerSize\":10,\"outlierBandMarkerType\":\"triangle\"},\"title\":{\"fontSize\":16}}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "TextPanel",
+            "text": ""
+        },
+        {
+            "id": null,
+            "key": "panelpane-623932b492440a4b",
+            "title": "Failed Deployment(s)",
+            "visualSettings": "{\"general\":{\"mode\":\"singleValueMetrics\",\"type\":\"svp\",\"displayType\":\"default\",\"outlierBandColor\":\"#FDECF5\",\"outlierBandMarkerColor\":\"#ED3CPE\",\"outlierBandFillOpacity\":0.15,\"outlierBandLineThickness\":2,\"outlierBandMarkerSize\":10,\"outlierBandMarkerType\":\"triangle\"},\"title\":{\"fontSize\":16},\"svp\":{\"option\":\"Average\",\"label\":\"Failed\",\"useBackgroundColor\":false,\"useNoData\":false,\"noDataString\":\"0\",\"hideData\":false,\"rounding\":2,\"thresholds\":[{\"from\":null,\"to\":null,\"color\":\"#16943E\"},{\"from\":null,\"to\":null,\"color\":\"#DFBE2E\"},{\"from\":0,\"to\":null,\"color\":\"#BF2121\"}],\"sparkline\":{\"show\":false,\"color\":\"#222D3B\"},\"gauge\":{\"show\":false,\"min\":0,\"max\":100,\"showThreshold\":false,\"showThresholdMarker\":false}},\"series\":{}}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "SumoSearchPanel",
+            "queries": [
+                {
+                    "transient": false,
+                    "queryString": "_collector=\"GitLab - Sumologic\"\n| json field=_raw \"object_kind\" as event_type\n| where event_type = \"deployment\"\n| json auto field=_raw \"status\",\"deployment_id\", \"environment\", \"project.name\", \"project.path_with_namespace\"  as status, deployment_id, environment, repo_name, group_name\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2\n| where status = \"failed\" and repo_name matches \"{{repo_name}}\" and environment matches \"{{environment}}\" and sub_group_1 matches \"{{sub_group_1}}\" and sub_group_2 matches \"{{sub_group_2}}\"\n| count by deployment_id\n| sum(_count)",
+                    "queryType": "Logs",
+                    "queryKey": "A",
+                    "metricsQueryMode": null,
+                    "metricsQueryData": null,
+                    "tracesQueryData": null,
+                    "spansQueryData": null,
+                    "parseMode": "Manual",
+                    "timeSource": "Message",
+                    "outputCardinalityLimit": null
+                }
+            ],
+            "description": "",
+            "timeRange": null,
+            "coloringRules": null,
+            "linkedDashboards": []
+        },
+        {
+            "id": null,
+            "key": "panelpane-17d3c1c89c2bb941",
+            "title": "Success Deployment(s)",
+            "visualSettings": "{\"general\":{\"mode\":\"singleValueMetrics\",\"type\":\"svp\",\"displayType\":\"default\",\"outlierBandColor\":\"#FDECF5\",\"outlierBandMarkerColor\":\"#ED3CPE\",\"outlierBandFillOpacity\":0.15,\"outlierBandLineThickness\":2,\"outlierBandMarkerSize\":10,\"outlierBandMarkerType\":\"triangle\"},\"title\":{\"fontSize\":16},\"svp\":{\"option\":\"Average\",\"label\":\"Success\",\"useBackgroundColor\":false,\"useNoData\":false,\"noDataString\":\"0\",\"hideData\":false,\"rounding\":2,\"thresholds\":[{\"from\":0,\"to\":null,\"color\":\"#16943E\"},{\"from\":null,\"to\":null,\"color\":\"#DFBE2E\"},{\"from\":null,\"to\":null,\"color\":\"#BF2121\"}],\"sparkline\":{\"show\":false,\"color\":\"#222D3B\"},\"gauge\":{\"show\":false,\"min\":0,\"max\":100,\"showThreshold\":false,\"showThresholdMarker\":false}},\"series\":{}}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "SumoSearchPanel",
+            "queries": [
+                {
+                    "transient": false,
+                    "queryString": "_collector=\"GitLab - Sumologic\"\n| json field=_raw \"object_kind\" as event_type\n| where event_type = \"deployment\"\n| json auto field=_raw \"status\",\"deployment_id\", \"environment\", \"project.name\", \"project.path_with_namespace\"  as status, deployment_id, environment, repo_name, group_name\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2\n| where status = \"success\" and repo_name matches \"{{repo_name}}\" and environment matches \"{{environment}}\" and sub_group_1 matches \"{{sub_group_1}}\" and sub_group_2 matches \"{{sub_group_2}}\"\n| count by deployment_id\n| sum(_count)",
+                    "queryType": "Logs",
+                    "queryKey": "A",
+                    "metricsQueryMode": null,
+                    "metricsQueryData": null,
+                    "tracesQueryData": null,
+                    "spansQueryData": null,
+                    "parseMode": "Manual",
+                    "timeSource": "Message",
+                    "outputCardinalityLimit": null
+                }
+            ],
+            "description": "",
+            "timeRange": null,
+            "coloringRules": null,
+            "linkedDashboards": []
+        },
+        {
+            "id": null,
+            "key": "panelpane-1c332668885eba46",
+            "title": "Failed Deployment",
+            "visualSettings": "{\"general\":{\"mode\":\"singleValueMetrics\",\"type\":\"svp\",\"displayType\":\"default\",\"outlierBandColor\":\"#FDECF5\",\"outlierBandMarkerColor\":\"#ED3CPE\",\"outlierBandFillOpacity\":0.15,\"outlierBandLineThickness\":2,\"outlierBandMarkerSize\":10,\"outlierBandMarkerType\":\"triangle\"},\"title\":{\"fontSize\":16},\"svp\":{\"option\":\"Average\",\"label\":\"Failed\",\"useBackgroundColor\":false,\"useNoData\":false,\"noDataString\":\"0\",\"hideData\":false,\"rounding\":2,\"thresholds\":[{\"from\":null,\"to\":null,\"color\":\"#16943E\"},{\"from\":null,\"to\":null,\"color\":\"#DFBE2E\"},{\"from\":0,\"to\":null,\"color\":\"#BF2121\"}],\"sparkline\":{\"show\":false,\"color\":\"#222D3B\"},\"gauge\":{\"show\":false,\"min\":0,\"max\":100,\"showThreshold\":false,\"showThresholdMarker\":false}},\"series\":{}}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "SumoSearchPanel",
+            "queries": [
+                {
+                    "transient": false,
+                    "queryString": "_collector=\"GitLab - Sumologic\"\n| json field=_raw \"object_kind\" as event_type\n| where event_type = \"deployment\"\n| json auto field=_raw \"status\",\"deployment_id\", \"environment\", \"project.name\", \"project.path_with_namespace\"  as status, deployment_id, environment, repo_name, group_name\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2\n| where status = \"failed\" and repo_name matches \"{{repo_name}}\" and environment = \"staging\" and sub_group_1 matches \"{{sub_group_1}}\" and sub_group_2 matches \"{{sub_group_2}}\"\n| count by deployment_id\n| sum(_count)",
+                    "queryType": "Logs",
+                    "queryKey": "A",
+                    "metricsQueryMode": null,
+                    "metricsQueryData": null,
+                    "tracesQueryData": null,
+                    "spansQueryData": null,
+                    "parseMode": "Manual",
+                    "timeSource": "Message",
+                    "outputCardinalityLimit": null
+                }
+            ],
+            "description": "",
+            "timeRange": null,
+            "coloringRules": null,
+            "linkedDashboards": []
+        },
+        {
+            "id": null,
+            "key": "panelpane-73393821bffdaa43",
+            "title": "Success Deployment(s)",
+            "visualSettings": "{\"general\":{\"mode\":\"singleValueMetrics\",\"type\":\"svp\",\"displayType\":\"default\",\"outlierBandColor\":\"#FDECF5\",\"outlierBandMarkerColor\":\"#ED3CPE\",\"outlierBandFillOpacity\":0.15,\"outlierBandLineThickness\":2,\"outlierBandMarkerSize\":10,\"outlierBandMarkerType\":\"triangle\"},\"title\":{\"fontSize\":16},\"svp\":{\"option\":\"Average\",\"label\":\"Success\",\"useBackgroundColor\":false,\"useNoData\":false,\"noDataString\":\"0\",\"hideData\":false,\"rounding\":2,\"thresholds\":[{\"from\":0,\"to\":10000,\"color\":\"#16943E\"},{\"from\":null,\"to\":null,\"color\":\"#DFBE2E\"},{\"from\":null,\"to\":null,\"color\":\"#BF2121\"}],\"sparkline\":{\"show\":false,\"color\":\"#222D3B\"},\"gauge\":{\"show\":false,\"min\":0,\"max\":100,\"showThreshold\":false,\"showThresholdMarker\":false}},\"series\":{}}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "SumoSearchPanel",
+            "queries": [
+                {
+                    "transient": false,
+                    "queryString": "_collector=\"GitLab - Sumologic\"\n| json field=_raw \"object_kind\" as event_type\n| where event_type = \"deployment\"\n| json auto field=_raw \"status\",\"deployment_id\", \"environment\", \"project.name\", \"project.path_with_namespace\"  as status, deployment_id, environment, repo_name, group_name\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2\n| where status = \"success\" and repo_name matches \"{{repo_name}}\" and environment = \"staging\" and sub_group_1 matches \"{{sub_group_1}}\" and sub_group_2 matches \"{{sub_group_2}}\"\n| count by deployment_id\n| sum(_count)",
+                    "queryType": "Logs",
+                    "queryKey": "A",
+                    "metricsQueryMode": null,
+                    "metricsQueryData": null,
+                    "tracesQueryData": null,
+                    "spansQueryData": null,
+                    "parseMode": "Manual",
+                    "timeSource": "Message",
+                    "outputCardinalityLimit": null
+                }
+            ],
+            "description": "",
+            "timeRange": null,
+            "coloringRules": null,
+            "linkedDashboards": []
+        },
+        {
+            "id": null,
+            "key": "panelpane-0d93214c8ee8da47",
+            "title": "Successful Deploy trends",
+            "visualSettings": "{\"general\":{\"mode\":\"timeSeries\",\"type\":\"line\",\"displayType\":\"smooth\",\"outlierBandColor\":\"#FDECF5\",\"outlierBandMarkerColor\":\"#ED3CPE\",\"outlierBandFillOpacity\":0.15,\"outlierBandLineThickness\":2,\"outlierBandMarkerSize\":10,\"outlierBandMarkerType\":\"triangle\",\"markerSize\":6,\"lineDashType\":\"solid\",\"markerType\":\"cross\",\"lineThickness\":2},\"title\":{\"fontSize\":16},\"axes\":{\"axisX\":{\"title\":\"\",\"titleFontSize\":11,\"labelFontSize\":10},\"axisY\":{\"title\":\"\",\"titleFontSize\":11,\"labelFontSize\":12,\"logarithmic\":false,\"gridColor\":\"#dde4e9\"}},\"legend\":{\"enabled\":true,\"verticalAlign\":\"bottom\",\"fontSize\":12,\"maxHeight\":50,\"showAsTable\":false,\"wrap\":true},\"color\":{\"family\":\"Colorsafe\"},\"series\":{\"A_production\":{\"visible\":true},\"A_staging\":{\"visible\":true}},\"overrides\":[]}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "SumoSearchPanel",
+            "queries": [
+                {
+                    "transient": false,
+                    "queryString": "_collector=\"GitLab - Sumologic\"\n| json field=_raw \"object_kind\" as event_type\n| where event_type = \"deployment\"\n| json auto field=_raw \"status\",\"deployment_id\", \"environment\", \"project.name\", \"project.path_with_namespace\"  as status, deployment_id, environment, repo_name, group_name\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2\n| where status = \"success\" and repo_name matches \"{{repo_name}}\" and environment matches \"{{environment}}\" and sub_group_1 matches \"{{sub_group_1}}\" and sub_group_2 matches \"{{sub_group_2}}\"\n| timeslice 1d\n| count by _timeslice, environment\n| transpose row _timeslice column environment",
+                    "queryType": "Logs",
+                    "queryKey": "A",
+                    "metricsQueryMode": null,
+                    "metricsQueryData": null,
+                    "tracesQueryData": null,
+                    "spansQueryData": null,
+                    "parseMode": "Manual",
+                    "timeSource": "Message",
+                    "outputCardinalityLimit": null
+                }
+            ],
+            "description": "",
+            "timeRange": {
+                "type": "BeginBoundedTimeRange",
+                "from": {
+                    "type": "RelativeTimeRangeBoundary",
+                    "relativeTime": "-4w2d"
+                },
+                "to": null
+            },
+            "coloringRules": null,
+            "linkedDashboards": []
+        },
+        {
+            "id": null,
+            "key": "panelB808D7FDA4D05943",
+            "title": "releases",
+            "visualSettings": "{\"title\":{\"fontSize\":14},\"general\":{\"type\":\"svp\",\"displayType\":\"default\",\"mode\":\"singleValueMetrics\"},\"svp\":{\"option\":\"Sum\",\"label\":\"releases\",\"useBackgroundColor\":false,\"useNoData\":false,\"noDataString\":\"0\",\"hideData\":false,\"hideLabel\":false,\"rounding\":2,\"valueFontSize\":24,\"labelFontSize\":14,\"thresholds\":[{\"from\":0,\"to\":null,\"color\":\"#16943E\"},{\"from\":null,\"to\":null,\"color\":\"#DFBE2E\"},{\"from\":null,\"to\":null,\"color\":\"#BF2121\"}],\"sparkline\":{\"show\":false},\"gauge\":{\"show\":true,\"min\":0,\"max\":100}},\"series\":{}}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "SumoSearchPanel",
+            "queries": [
+                {
+                    "transient": false,
+                    "queryString": "_collector=\"GitLab - Sumologic\"\n| json field=_raw \"object_kind\" as event_type\n| Where event_type = \"release\" \n| json auto field=_raw \"name\",\"released_at\", \"project.name\", \"commit.url\", \"id\", \"commit.author.name\", \"project.path_with_namespace\"  as release_name, released_at, repo_name, commit_url, correlation_id, release_author, group_name\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2\n| where repo_name matches \"{{repo_name}}\" and sub_group_1 matches \"{{sub_group_1}}\" and sub_group_2 matches \"{{sub_group_2}}\"\n| split released_at escape='\\',delim=' ' extract release_date\n| count by release_date\n//| where status = \"failed\"",
+                    "queryType": "Logs",
+                    "queryKey": "A",
+                    "metricsQueryMode": null,
+                    "metricsQueryData": null,
+                    "tracesQueryData": null,
+                    "spansQueryData": null,
+                    "parseMode": "Auto",
+                    "timeSource": "Message",
+                    "outputCardinalityLimit": null
+                }
+            ],
+            "description": "",
+            "timeRange": null,
+            "coloringRules": null,
+            "linkedDashboards": []
+        },
+        {
+            "id": null,
+            "key": "panel256178D9A86C2B40",
+            "title": "Production releases",
+            "visualSettings": "{\"general\":{\"mode\":\"TextPanel\",\"type\":\"text\",\"displayType\":\"default\",\"outlierBandColor\":\"#FDECF5\",\"outlierBandMarkerColor\":\"#ED3CPE\",\"outlierBandFillOpacity\":0.15,\"outlierBandLineThickness\":2,\"outlierBandMarkerSize\":10,\"outlierBandMarkerType\":\"triangle\"},\"title\":{\"fontSize\":16},\"series\":{}}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "TextPanel",
+            "text": ""
+        },
+        {
+            "id": null,
+            "key": "panelDAB187F1811CC94B",
+            "title": "All Environments",
+            "visualSettings": "{\"general\":{\"mode\":\"TextPanel\",\"type\":\"text\",\"displayType\":\"default\",\"outlierBandColor\":\"#FDECF5\",\"outlierBandMarkerColor\":\"#ED3CPE\",\"outlierBandFillOpacity\":0.15,\"outlierBandLineThickness\":2,\"outlierBandMarkerSize\":10,\"outlierBandMarkerType\":\"triangle\"},\"title\":{\"fontSize\":16},\"series\":{}}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "TextPanel",
+            "text": ""
+        },
+        {
+            "id": null,
+            "key": "panel71423A0CAF296845",
+            "title": "Success Deployment(s)",
+            "visualSettings": "{\"general\":{\"mode\":\"singleValueMetrics\",\"type\":\"svp\",\"displayType\":\"default\",\"outlierBandColor\":\"#FDECF5\",\"outlierBandMarkerColor\":\"#ED3CPE\",\"outlierBandFillOpacity\":0.15,\"outlierBandLineThickness\":2,\"outlierBandMarkerSize\":10,\"outlierBandMarkerType\":\"triangle\"},\"title\":{\"fontSize\":16},\"svp\":{\"option\":\"Average\",\"label\":\"Success\",\"useBackgroundColor\":false,\"useNoData\":false,\"noDataString\":\"0\",\"hideData\":false,\"rounding\":2,\"thresholds\":[{\"from\":0,\"to\":null,\"color\":\"#16943E\"},{\"from\":null,\"to\":null,\"color\":\"#DFBE2E\"},{\"from\":null,\"to\":null,\"color\":\"#BF2121\"}],\"sparkline\":{\"show\":false,\"color\":\"#222D3B\"},\"gauge\":{\"show\":false,\"min\":0,\"max\":100,\"showThreshold\":false,\"showThresholdMarker\":false}},\"series\":{}}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "SumoSearchPanel",
+            "queries": [
+                {
+                    "transient": false,
+                    "queryString": "_collector=\"GitLab - Sumologic\"\n| json field=_raw \"object_kind\" as event_type\n| where event_type = \"deployment\"\n| json auto field=_raw \"status\",\"deployment_id\", \"environment\", \"project.name\", \"project.path_with_namespace\"  as status, deployment_id, environment, repo_name, group_name\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2\n| where status = \"success\" and repo_name matches \"{{repo_name}}\" and environment = \"production\" and sub_group_1 matches \"{{sub_group_1}}\" and sub_group_2 matches \"{{sub_group_2}}\"\n| count by deployment_id\n| sum(_count)",
+                    "queryType": "Logs",
+                    "queryKey": "A",
+                    "metricsQueryMode": null,
+                    "metricsQueryData": null,
+                    "tracesQueryData": null,
+                    "spansQueryData": null,
+                    "parseMode": "Manual",
+                    "timeSource": "Message",
+                    "outputCardinalityLimit": null
+                }
+            ],
+            "description": "",
+            "timeRange": null,
+            "coloringRules": null,
+            "linkedDashboards": []
+        },
+        {
+            "id": null,
+            "key": "panel64830586A2368848",
+            "title": "Failed Deployment(s)",
+            "visualSettings": "{\"general\":{\"mode\":\"singleValueMetrics\",\"type\":\"svp\",\"displayType\":\"default\",\"outlierBandColor\":\"#FDECF5\",\"outlierBandMarkerColor\":\"#ED3CPE\",\"outlierBandFillOpacity\":0.15,\"outlierBandLineThickness\":2,\"outlierBandMarkerSize\":10,\"outlierBandMarkerType\":\"triangle\"},\"title\":{\"fontSize\":16},\"svp\":{\"option\":\"Average\",\"label\":\"Failed\",\"useBackgroundColor\":false,\"useNoData\":false,\"noDataString\":\"0\",\"hideData\":false,\"rounding\":2,\"thresholds\":[{\"from\":null,\"to\":null,\"color\":\"#16943E\"},{\"from\":null,\"to\":null,\"color\":\"#DFBE2E\"},{\"from\":0,\"to\":null,\"color\":\"#BF2121\"}],\"sparkline\":{\"show\":false,\"color\":\"#222D3B\"},\"gauge\":{\"show\":false,\"min\":0,\"max\":100,\"showThreshold\":false,\"showThresholdMarker\":false}},\"series\":{}}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "SumoSearchPanel",
+            "queries": [
+                {
+                    "transient": false,
+                    "queryString": "_collector=\"GitLab - Sumologic\"\n| json field=_raw \"object_kind\" as event_type\n| where event_type = \"deployment\"\n| json auto field=_raw \"status\",\"deployment_id\", \"environment\", \"project.name\", \"project.path_with_namespace\"  as status, deployment_id, environment, repo_name, group_name\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2\n| where status = \"failed\" and repo_name matches \"{{repo_name}}\" and environment = \"production\" and sub_group_1 matches \"{{sub_group_1}}\" and sub_group_2 matches \"{{sub_group_2}}\"\n| count by deployment_id\n| sum(_count)",
+                    "queryType": "Logs",
+                    "queryKey": "A",
+                    "metricsQueryMode": null,
+                    "metricsQueryData": null,
+                    "tracesQueryData": null,
+                    "spansQueryData": null,
+                    "parseMode": "Manual",
+                    "timeSource": "Message",
+                    "outputCardinalityLimit": null
+                }
+            ],
+            "description": "",
+            "timeRange": null,
+            "coloringRules": null,
+            "linkedDashboards": []
+        },
+        {
+            "id": null,
+            "key": "panelPANE-6D651D7FA9CF494E",
+            "title": "Deployments Summary",
+            "visualSettings": "{\"title\":{\"fontSize\":14},\"axes\":{\"axisX\":{\"titleFontSize\":12,\"labelFontSize\":12},\"axisY\":{\"titleFontSize\":12,\"labelFontSize\":12}},\"series\":{},\"general\":{\"type\":\"table\",\"displayType\":\"default\",\"paginationPageSize\":100,\"fontSize\":12,\"mode\":\"distribution\"},\"legend\":{\"enabled\":false}}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "SumoSearchPanel",
+            "queries": [
+                {
+                    "transient": false,
+                    "queryString": "_collector=\"GitLab - Sumologic\"\n| json field=_raw \"object_kind\" as event_type\n| where event_type = \"deployment\"\n| json field=_raw \"status\",\"deployment_id\", \"environment\", \"project.name\", \"commit_url\", \"short_sha\", \"deployable_url\", \"status_changed_at\", \"project.web_url\", \"project.path_with_namespace\"  as status, deployment_id, environment, repoFullName, commit_link, commit, pipe_result_link, status_changed_at, project_url, group_name\n| repoFullName as repo_name\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2\n| where status in (\"success\", \"failed\")\n| tourl (commit_link, concat(\"Commit # \",commit)) as commit_info\n| tourl (project_url, repo_name) as project\n| where repo_name matches \"{{repo_name}}\" and environment matches \"{{environment}}\" and sub_group_1 matches \"{{sub_group_1}}\" and sub_group_2 matches \"{{sub_group_2}}\"\n| environment as deploy_env\n| count by deploy_env, status, commit_info, project, status_changed_at\n| fields - _count\n| sort by status_changed_at desc",
+                    "queryType": "Logs",
+                    "queryKey": "A",
+                    "metricsQueryMode": null,
+                    "metricsQueryData": null,
+                    "tracesQueryData": null,
+                    "spansQueryData": null,
+                    "parseMode": "Auto",
+                    "timeSource": "Message",
+                    "outputCardinalityLimit": null
+                }
+            ],
+            "description": "",
+            "timeRange": null,
+            "coloringRules": null,
+            "linkedDashboards": []
+        }
+    ],
+    "variables": [
+        {
+            "id": null,
+            "name": "repo_name",
+            "displayName": "repo_name",
+            "defaultValue": "*",
+            "sourceDefinition": {
+                "variableSourceType": "LogQueryVariableSourceDefinition",
+                "query": "_collector=\"GitLab - Sumologic\"\n| json field=_raw \"project.name\" as repo_name",
+                "field": "project.name"
+            },
+            "allowMultiSelect": false,
+            "includeAllOption": true,
+            "hideFromUI": false,
+            "valueType": "Any"
+        },
+        {
+            "id": null,
+            "name": "environment",
+            "displayName": "environment",
+            "defaultValue": "*",
+            "sourceDefinition": {
+                "variableSourceType": "LogQueryVariableSourceDefinition",
+                "query": "_collector=\"GitLab - Sumologic\"\n| json field=_raw \"environment\" as environment",
+                "field": "environment"
+            },
+            "allowMultiSelect": false,
+            "includeAllOption": true,
+            "hideFromUI": false,
+            "valueType": "Any"
+        },
+        {
+            "id": null,
+            "name": "sub_group_1",
+            "displayName": "sub_group_1",
+            "defaultValue": "*",
+            "sourceDefinition": {
+                "variableSourceType": "LogQueryVariableSourceDefinition",
+                "query": "_collector=\"GitLab - Sumologic\"\n| json field=_raw \"project.path_with_namespace\" as group_name\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2 ",
+                "field": "sub_group_1"
+            },
+            "allowMultiSelect": false,
+            "includeAllOption": true,
+            "hideFromUI": false,
+            "valueType": "Any"
+        },
+        {
+            "id": null,
+            "name": "sub_group_2",
+            "displayName": "sub_group_2",
+            "defaultValue": "*",
+            "sourceDefinition": {
+                "variableSourceType": "LogQueryVariableSourceDefinition",
+                "query": "_collector=\"GitLab - Sumologic\"\n| json field=_raw \"project.path_with_namespace\" as group_name\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2 ",
+                "field": "sub_group_2"
+            },
+            "allowMultiSelect": false,
+            "includeAllOption": true,
+            "hideFromUI": false,
+            "valueType": "Any"
+        }
+    ],
+    "coloringRules": []
+}

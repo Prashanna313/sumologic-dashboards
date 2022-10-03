@@ -1,0 +1,322 @@
+{
+    "type": "DashboardV2SyncDefinition",
+    "name": "Gitlab MR's",
+    "description": "The Gitlab Merge Request dashboard gives a high-level view of merge requests opened, merged, and declined. It also provides with the insights of average time taken to close the merge request by repository and by reviewers.",
+    "title": "Gitlab MR's",
+    "theme": "Dark",
+    "topologyLabelMap": {
+        "data": {}
+    },
+    "refreshInterval": 0,
+    "timeRange": {
+        "type": "BeginBoundedTimeRange",
+        "from": {
+            "type": "RelativeTimeRangeBoundary",
+            "relativeTime": "-1d"
+        },
+        "to": null
+    },
+    "layout": {
+        "layoutType": "Grid",
+        "layoutStructures": [
+            {
+                "key": "panelpane-75f6489997f46a4e",
+                "structure": "{\"height\":7,\"width\":8,\"x\":16,\"y\":0}"
+            },
+            {
+                "key": "panelpane-e6cb715ba3376b48",
+                "structure": "{\"height\":7,\"width\":8,\"x\":0,\"y\":7}"
+            },
+            {
+                "key": "panelpane-d0946f33826be949",
+                "structure": "{\"height\":7,\"width\":4,\"x\":0,\"y\":0}"
+            },
+            {
+                "key": "panelpane-c258feb8a537d847",
+                "structure": "{\"height\":7,\"width\":4,\"x\":4,\"y\":0}"
+            },
+            {
+                "key": "panelpane-f18694c88f238a49",
+                "structure": "{\"height\":7,\"width\":4,\"x\":12,\"y\":0}"
+            },
+            {
+                "key": "panelpane-795c13609df0284c",
+                "structure": "{\"height\":7,\"width\":8,\"x\":8,\"y\":7}"
+            },
+            {
+                "key": "panel41A5512788809B47",
+                "structure": "{\"height\":7,\"width\":8,\"x\":16,\"y\":7}"
+            },
+            {
+                "key": "panelCD4D54EEA453DB40",
+                "structure": "{\"height\":7,\"width\":4,\"x\":8,\"y\":0}"
+            }
+        ]
+    },
+    "panels": [
+        {
+            "id": null,
+            "key": "panelpane-75f6489997f46a4e",
+            "title": "MR - Events ",
+            "visualSettings": "{\"general\":{\"mode\":\"distribution\",\"type\":\"pie\",\"displayType\":\"default\",\"outlierBandColor\":\"#FDECF5\",\"outlierBandMarkerColor\":\"#ED3CPE\",\"outlierBandFillOpacity\":0.15,\"outlierBandLineThickness\":2,\"outlierBandMarkerSize\":10,\"outlierBandMarkerType\":\"triangle\",\"fillOpacity\":1,\"startAngle\":270,\"innerRadius\":\"50%\",\"maxNumOfSlices\":10},\"title\":{\"fontSize\":16},\"series\":{},\"overrides\":[{\"series\":[\"close\"],\"queries\":[],\"properties\":{\"color\":\"#bf2121\"}},{\"series\":[\"merge\"],\"queries\":[],\"properties\":{\"color\":\"#116b25\"}},{\"series\":[\"update\"],\"queries\":[],\"properties\":{\"color\":\"#dfbe2e\"}}]}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "SumoSearchPanel",
+            "queries": [
+                {
+                    "transient": false,
+                    "queryString": "_collector=\"GitLab - Sumologic\"\n| json \"object_kind\" as event_type\n| where event_type = \"merge_request\"\n| json \"object_attributes.id\", \"object_attributes.title\", \"object_attributes.description\",  \"project.name\", \"object_attributes.target_branch\", \"object_attributes.created_at\", \"object_attributes.source_branch\", \"user.name\", \"object_attributes.state\",  \"object_attributes.url\", \"object_attributes.action\", \"project.path_with_namespace\" as id, title, description, repo_name, dest_branch_name, create_time, source_branch_name, author, state, mr_link, action , group_name nodrop\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2\n| where repo_name matches \"{{repo_name}}\" and sub_group_1 matches \"{{sub_group_1}}\" and sub_group_2 matches \"{{sub_group_2}}\"\n| tourl (mr_link, title) as MR\n| count by  action\n| sort by _count",
+                    "queryType": "Logs",
+                    "queryKey": "A",
+                    "metricsQueryMode": null,
+                    "metricsQueryData": null,
+                    "tracesQueryData": null,
+                    "spansQueryData": null,
+                    "parseMode": "Manual",
+                    "timeSource": "Message",
+                    "outputCardinalityLimit": null
+                }
+            ],
+            "description": "",
+            "timeRange": null,
+            "coloringRules": null,
+            "linkedDashboards": []
+        },
+        {
+            "id": null,
+            "key": "panelpane-e6cb715ba3376b48",
+            "title": "MR Opened and Merged by Repository",
+            "visualSettings": "{\"title\":{\"fontSize\":16},\"axes\":{\"axisX\":{\"title\":\"Repo Name\",\"titleFontSize\":11,\"labelFontSize\":10},\"axisY\":{\"title\":\"\",\"titleFontSize\":11,\"labelFontSize\":12,\"logarithmic\":false,\"gridColor\":\"#dde4e9\"}},\"legend\":{\"enabled\":true,\"verticalAlign\":\"bottom\",\"fontSize\":12,\"maxHeight\":50,\"showAsTable\":false,\"wrap\":true},\"series\":{},\"general\":{\"type\":\"bar\",\"displayType\":\"stacked\",\"fillOpacity\":1,\"outlierBandColor\":\"#FDECF5\",\"outlierBandMarkerColor\":\"#ED3CPE\",\"outlierBandFillOpacity\":0.15,\"outlierBandLineThickness\":2,\"outlierBandMarkerSize\":10,\"outlierBandMarkerType\":\"triangle\",\"mode\":\"distribution\"},\"color\":{\"family\":\"Sequential 1\"},\"overrides\":[{\"series\":[\"merge\"],\"queries\":[],\"properties\":{\"color\":\"#116b25\",\"dataPointMaxWidth\":10}},{\"series\":[\"open\"],\"queries\":[],\"properties\":{\"color\":\"#007ca6\"}}]}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "SumoSearchPanel",
+            "queries": [
+                {
+                    "transient": false,
+                    "queryString": "_collector=\"GitLab - Sumologic\"\n| json \"object_kind\" as event_type\n| where event_type = \"merge_request\"\n| json \"object_attributes.id\", \"object_attributes.title\", \"object_attributes.description\",  \"project.name\", \"object_attributes.target_branch\", \"object_attributes.created_at\", \"object_attributes.source_branch\", \"user.name\", \"object_attributes.state\",  \"object_attributes.url\", \"object_attributes.action\", \"project.path_with_namespace\" as id, title, description, repo_name, dest_branch_name, create_time, source_branch_name, author, state, mr_link, action, group_name nodrop\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2\n| where repo_name matches \"{{repo_name}}\" and sub_group_1 matches \"{{sub_group_1}}\" and sub_group_2 matches \"{{sub_group_2}}\"\n| tourl (mr_link, title) as MR\n| where action in (\"open\", \"merge\")\n| count by repo_name, action\n| transpose row repo_name column action",
+                    "queryType": "Logs",
+                    "queryKey": "A",
+                    "metricsQueryMode": null,
+                    "metricsQueryData": null,
+                    "tracesQueryData": null,
+                    "spansQueryData": null,
+                    "parseMode": "Manual",
+                    "timeSource": "Message",
+                    "outputCardinalityLimit": null
+                }
+            ],
+            "description": "",
+            "timeRange": null,
+            "coloringRules": null,
+            "linkedDashboards": []
+        },
+        {
+            "id": null,
+            "key": "panelpane-d0946f33826be949",
+            "title": "MR Created",
+            "visualSettings": "{\"general\":{\"mode\":\"singleValueMetrics\",\"type\":\"svp\",\"displayType\":\"default\",\"outlierBandColor\":\"#FDECF5\",\"outlierBandMarkerColor\":\"#ED3CPE\",\"outlierBandFillOpacity\":0.15,\"outlierBandLineThickness\":2,\"outlierBandMarkerSize\":10,\"outlierBandMarkerType\":\"triangle\"},\"title\":{\"fontSize\":16},\"svp\":{\"option\":\"Average\",\"label\":\"Merge Requests\",\"useBackgroundColor\":false,\"useNoData\":false,\"noDataString\":\"0\",\"hideData\":false,\"rounding\":2,\"thresholds\":[{\"from\":null,\"to\":null,\"color\":\"#16943E\"},{\"from\":null,\"to\":null,\"color\":\"#DFBE2E\"},{\"from\":null,\"to\":null,\"color\":\"#BF2121\"}],\"sparkline\":{\"show\":false,\"color\":\"#222D3B\"},\"gauge\":{\"show\":false,\"min\":0,\"max\":100,\"showThreshold\":false,\"showThresholdMarker\":false}},\"series\":{}}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "SumoSearchPanel",
+            "queries": [
+                {
+                    "transient": false,
+                    "queryString": "_collector=\"GitLab - Sumologic\"\n| json \"object_kind\" as event_type\n| where event_type = \"merge_request\"\n| json \"object_attributes.id\", \"object_attributes.title\", \"object_attributes.description\",  \"project.name\", \"object_attributes.target_branch\", \"object_attributes.created_at\", \"object_attributes.source_branch\", \"user.name\", \"object_attributes.state\",  \"object_attributes.url\", \"object_attributes.action\", \"project.path_with_namespace\" as id, title, description, repo_name, dest_branch_name, create_time, source_branch_name, author, state, mr_link, action, group_name nodrop\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2\n| where action = \"open\" and repo_name matches \"{{repo_name}}\" and sub_group_1 matches \"{{sub_group_1}}\" and sub_group_2 matches \"{{sub_group_2}}\"\n| count",
+                    "queryType": "Logs",
+                    "queryKey": "A",
+                    "metricsQueryMode": null,
+                    "metricsQueryData": null,
+                    "tracesQueryData": null,
+                    "spansQueryData": null,
+                    "parseMode": "Manual",
+                    "timeSource": "Message",
+                    "outputCardinalityLimit": null
+                }
+            ],
+            "description": "",
+            "timeRange": null,
+            "coloringRules": null,
+            "linkedDashboards": []
+        },
+        {
+            "id": null,
+            "key": "panelpane-c258feb8a537d847",
+            "title": "MR Merged",
+            "visualSettings": "{\"general\":{\"mode\":\"singleValueMetrics\",\"type\":\"svp\",\"displayType\":\"default\",\"outlierBandColor\":\"#FDECF5\",\"outlierBandMarkerColor\":\"#ED3CPE\",\"outlierBandFillOpacity\":0.15,\"outlierBandLineThickness\":2,\"outlierBandMarkerSize\":10,\"outlierBandMarkerType\":\"triangle\"},\"title\":{\"fontSize\":16},\"svp\":{\"option\":\"Average\",\"label\":\"Merge Requests\",\"useBackgroundColor\":false,\"useNoData\":false,\"noDataString\":\"0\",\"hideData\":false,\"rounding\":2,\"thresholds\":[{\"from\":0,\"to\":100000,\"color\":\"#16943E\"},{\"from\":null,\"to\":null,\"color\":\"#DFBE2E\"},{\"from\":null,\"to\":null,\"color\":\"#BF2121\"}],\"sparkline\":{\"show\":false,\"color\":\"#222D3B\"},\"gauge\":{\"show\":false,\"min\":0,\"max\":100,\"showThreshold\":false,\"showThresholdMarker\":false}},\"series\":{}}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "SumoSearchPanel",
+            "queries": [
+                {
+                    "transient": false,
+                    "queryString": "_collector=\"GitLab - Sumologic\"\n| json \"object_kind\" as event_type\n| where event_type = \"merge_request\"\n| json \"object_attributes.id\", \"object_attributes.title\", \"object_attributes.description\",  \"project.name\", \"object_attributes.target_branch\", \"object_attributes.created_at\", \"object_attributes.source_branch\", \"user.name\", \"object_attributes.state\",  \"object_attributes.url\", \"object_attributes.action\", \"project.path_with_namespace\" as id, title, description, repo_name, dest_branch_name, create_time, source_branch_name, author, state, mr_link, action, group_name nodrop\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2\n| where action = \"merge\" and repo_name matches \"{{repo_name}}\" and sub_group_1 matches \"{{sub_group_1}}\" and sub_group_2 matches \"{{sub_group_2}}\"\n| count",
+                    "queryType": "Logs",
+                    "queryKey": "A",
+                    "metricsQueryMode": null,
+                    "metricsQueryData": null,
+                    "tracesQueryData": null,
+                    "spansQueryData": null,
+                    "parseMode": "Manual",
+                    "timeSource": "Message",
+                    "outputCardinalityLimit": null
+                }
+            ],
+            "description": "",
+            "timeRange": null,
+            "coloringRules": null,
+            "linkedDashboards": []
+        },
+        {
+            "id": null,
+            "key": "panelpane-f18694c88f238a49",
+            "title": "MR Closed",
+            "visualSettings": "{\"general\":{\"mode\":\"singleValueMetrics\",\"type\":\"svp\",\"displayType\":\"default\",\"outlierBandColor\":\"#FDECF5\",\"outlierBandMarkerColor\":\"#ED3CPE\",\"outlierBandFillOpacity\":0.15,\"outlierBandLineThickness\":2,\"outlierBandMarkerSize\":10,\"outlierBandMarkerType\":\"triangle\"},\"title\":{\"fontSize\":16},\"svp\":{\"option\":\"Average\",\"label\":\"Merge Requests\",\"useBackgroundColor\":false,\"useNoData\":false,\"noDataString\":\"0\",\"hideData\":false,\"rounding\":2,\"thresholds\":[{\"from\":null,\"to\":null,\"color\":\"#16943E\"},{\"from\":0,\"to\":100000,\"color\":\"#df3d3d\"},{\"from\":null,\"to\":null,\"color\":\"#BF2121\"}],\"sparkline\":{\"show\":false,\"color\":\"\"},\"gauge\":{\"show\":false}},\"series\":{}}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "SumoSearchPanel",
+            "queries": [
+                {
+                    "transient": false,
+                    "queryString": "_collector=\"GitLab - Sumologic\"\n| json \"object_kind\" as event_type\n| where event_type = \"merge_request\"\n| json \"object_attributes.id\", \"object_attributes.title\", \"object_attributes.description\",  \"project.name\", \"object_attributes.target_branch\", \"object_attributes.created_at\", \"object_attributes.source_branch\", \"user.name\", \"object_attributes.state\",  \"object_attributes.url\", \"object_attributes.action\", \"project.path_with_namespace\" as id, title, description, repo_name, dest_branch_name, create_time, source_branch_name, author, state, mr_link, action, group_name nodrop\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2\n| where action = \"close\" and repo_name matches \"{{repo_name}}\" and sub_group_1 matches \"{{sub_group_1}}\" and sub_group_2 matches \"{{sub_group_2}}\"\n| count",
+                    "queryType": "Logs",
+                    "queryKey": "A",
+                    "metricsQueryMode": null,
+                    "metricsQueryData": null,
+                    "tracesQueryData": null,
+                    "spansQueryData": null,
+                    "parseMode": "Manual",
+                    "timeSource": "Message",
+                    "outputCardinalityLimit": null
+                }
+            ],
+            "description": "",
+            "timeRange": null,
+            "coloringRules": null,
+            "linkedDashboards": []
+        },
+        {
+            "id": null,
+            "key": "panelpane-795c13609df0284c",
+            "title": "‎Avg time to merge MRs by Author",
+            "visualSettings": "{\"title\":{\"fontSize\":14},\"axes\":{\"axisX\":{\"title\":\"Author\",\"titleFontSize\":12,\"labelFontSize\":10,\"hideLabels\":false},\"axisY\":{\"title\":\"Avg  Min(s) to merge MR\",\"titleFontSize\":12,\"labelFontSize\":12,\"logarithmic\":false},\"axisY2\":{\"hideLabels\":true}},\"legend\":{\"enabled\":false,\"verticalAlign\":\"bottom\",\"fontSize\":12,\"maxHeight\":50,\"showAsTable\":false,\"wrap\":false},\"series\":{},\"general\":{\"type\":\"column\",\"displayType\":\"default\",\"fillOpacity\":1,\"mode\":\"timeSeries\"},\"color\":{\"family\":\"Categorical Default\"},\"overrides\":[]}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "SumoSearchPanel",
+            "queries": [
+                {
+                    "transient": false,
+                    "queryString": "_collector=\"GitLab - Sumologic\"\n| json \"object_kind\" as event_type\n| where event_type = \"merge_request\"\n| json \"object_attributes.id\", \"object_attributes.title\", \"object_attributes.description\",  \"project.name\", \"object_attributes.target_branch\", \"object_attributes.created_at\", \"object_attributes.updated_at\",\"object_attributes.source_branch\", \"object_attributes.author_id\", \"object_attributes.state\",  \"object_attributes.url\", \"object_attributes.action\", \"project.path_with_namespace\" as id, title, description, repo_name, dest_branch_name, create_time, updated_time, source_branch_name, author, state, mr_link, action, group_name nodrop\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2\n| lookup GitlabUsername from path://\"/Library/Users/prashanna.r@gmail.com/Gitlab/GitlabUsers\" on GitlabUserId=author\n| where repo_name matches \"*\" and action = \"merge\" and sub_group_1 matches \"*\" and sub_group_2 matches \"*\"\n| parse regex field=create_time \"(?<create_time>\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d)\"\n| parse regex field=updated_time \"(?<merge_time>\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d)\"\n| parseDate(create_time, \"yyyy-MM-dd HH:mm:ss\") as MR_Create_milliseconds\n| parseDate(updated_time, \"yyyy-MM-dd HH:mm:ss\") as MR_Merge_milliseconds\n| MR_Merge_milliseconds - MR_Create_milliseconds as ms_to_close_MR\n| ms_to_close_MR/60000 as mins_to_close_MR\n| avg (mins_to_close_MR) as avg_mins_to_close_MR by GitlabUsername\n| round(avg_mins_to_close_MR) as avg_mins_to_close_MR\n| fields GitlabUsername, avg_mins_to_close_MR\n| sort by avg_mins_to_close_MR",
+                    "queryType": "Logs",
+                    "queryKey": "A",
+                    "metricsQueryMode": null,
+                    "metricsQueryData": null,
+                    "tracesQueryData": null,
+                    "spansQueryData": null,
+                    "parseMode": "Manual",
+                    "timeSource": "Message",
+                    "outputCardinalityLimit": null
+                }
+            ],
+            "description": "",
+            "timeRange": null,
+            "coloringRules": null,
+            "linkedDashboards": []
+        },
+        {
+            "id": null,
+            "key": "panel41A5512788809B47",
+            "title": "‎Avg time to merge MRs by branch",
+            "visualSettings": "{\"title\":{\"fontSize\":14},\"axes\":{\"axisX\":{\"title\":\"Target Branch\",\"titleFontSize\":12,\"labelFontSize\":12},\"axisY\":{\"title\":\"Avg Min(s) to merge MR\",\"titleFontSize\":12,\"labelFontSize\":12,\"logarithmic\":false}},\"legend\":{\"enabled\":false,\"verticalAlign\":\"bottom\",\"fontSize\":12,\"maxHeight\":50,\"showAsTable\":false,\"wrap\":true},\"series\":{},\"general\":{\"type\":\"column\",\"displayType\":\"default\",\"fillOpacity\":1,\"mode\":\"timeSeries\"},\"color\":{\"family\":\"Categorical Default\"},\"overrides\":[]}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "SumoSearchPanel",
+            "queries": [
+                {
+                    "transient": false,
+                    "queryString": "_collector=\"GitLab - Sumologic\"\n| json \"object_kind\" as event_type\n| where event_type = \"merge_request\"\n| json \"object_attributes.id\", \"object_attributes.title\", \"object_attributes.description\",  \"project.name\", \"object_attributes.target_branch\", \"object_attributes.created_at\", \"object_attributes.updated_at\",\"object_attributes.source_branch\", \"user.name\", \"object_attributes.state\",  \"object_attributes.url\", \"object_attributes.action\", \"project.path_with_namespace\" as id, title, description, repo_name, dest_branch_name, create_time, updated_time, source_branch_name, author, state, mr_link, action, group_name nodrop\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2\n| where repo_name matches \"{{repo_name}}\" and action = \"merge\" and sub_group_1 matches \"{{sub_group_1}}\" and sub_group_2 matches \"{{sub_group_2}}\" and dest_branch_name in (\"develop\", \"staging\", \"master\", \"main\")\n| parse regex field=create_time \"(?<create_time>\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d)\"\n| parse regex field=updated_time \"(?<merge_time>\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d)\"\n| parseDate(create_time, \"yyyy-MM-dd HH:mm:ss\") as MR_Create_milliseconds\n| parseDate(updated_time, \"yyyy-MM-dd HH:mm:ss\") as MR_Merge_milliseconds\n| MR_Merge_milliseconds - MR_Create_milliseconds as ms_to_close_MR\n| ms_to_close_MR/60000 as mins_to_close_MR\n| avg (mins_to_close_MR) as avg_mins_to_close_MR by  dest_branch_name\n| round(avg_mins_to_close_MR) as avg_mins_to_close_MR\n| fields dest_branch_name, avg_mins_to_close_MR\n| sort by avg_mins_to_close_MR",
+                    "queryType": "Logs",
+                    "queryKey": "A",
+                    "metricsQueryMode": null,
+                    "metricsQueryData": null,
+                    "tracesQueryData": null,
+                    "spansQueryData": null,
+                    "parseMode": "Manual",
+                    "timeSource": "Message",
+                    "outputCardinalityLimit": null
+                }
+            ],
+            "description": "",
+            "timeRange": null,
+            "coloringRules": null,
+            "linkedDashboards": []
+        },
+        {
+            "id": null,
+            "key": "panelCD4D54EEA453DB40",
+            "title": "MR Reopened",
+            "visualSettings": "{\"general\":{\"mode\":\"singleValueMetrics\",\"type\":\"svp\",\"displayType\":\"default\",\"outlierBandColor\":\"#FDECF5\",\"outlierBandMarkerColor\":\"#ED3CPE\",\"outlierBandFillOpacity\":0.15,\"outlierBandLineThickness\":2,\"outlierBandMarkerSize\":10,\"outlierBandMarkerType\":\"triangle\"},\"title\":{\"fontSize\":16},\"svp\":{\"option\":\"Average\",\"label\":\"Merge Requests\",\"useBackgroundColor\":false,\"useNoData\":false,\"noDataString\":\"0\",\"hideData\":false,\"rounding\":2,\"thresholds\":[{\"from\":null,\"to\":null,\"color\":\"#16943E\"},{\"from\":null,\"to\":null,\"color\":\"#DFBE2E\"},{\"from\":null,\"to\":null,\"color\":\"#BF2121\"}],\"sparkline\":{\"show\":false,\"color\":\"#222D3B\"},\"gauge\":{\"show\":false,\"min\":0,\"max\":100,\"showThreshold\":false,\"showThresholdMarker\":false}},\"series\":{}}",
+            "keepVisualSettingsConsistentWithParent": true,
+            "panelType": "SumoSearchPanel",
+            "queries": [
+                {
+                    "transient": false,
+                    "queryString": "_collector=\"GitLab - Sumologic\"\n| json \"object_kind\" as event_type\n| where event_type = \"merge_request\"\n| json \"object_attributes.id\", \"object_attributes.title\", \"object_attributes.description\",  \"project.name\", \"object_attributes.target_branch\", \"object_attributes.created_at\", \"object_attributes.source_branch\", \"user.name\", \"object_attributes.state\",  \"object_attributes.url\", \"object_attributes.action\", \"project.path_with_namespace\" as id, title, description, repo_name, dest_branch_name, create_time, source_branch_name, author, state, mr_link, action, group_name nodrop\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2\n| where action = \"reopen\" and repo_name matches \"{{repo_name}}\" and sub_group_1 matches \"{{sub_group_1}}\" and sub_group_2 matches \"{{sub_group_2}}\"\n| count",
+                    "queryType": "Logs",
+                    "queryKey": "A",
+                    "metricsQueryMode": null,
+                    "metricsQueryData": null,
+                    "tracesQueryData": null,
+                    "spansQueryData": null,
+                    "parseMode": "Manual",
+                    "timeSource": "Message",
+                    "outputCardinalityLimit": null
+                }
+            ],
+            "description": "",
+            "timeRange": null,
+            "coloringRules": null,
+            "linkedDashboards": []
+        }
+    ],
+    "variables": [
+        {
+            "id": null,
+            "name": "repo_name",
+            "displayName": "repo_name",
+            "defaultValue": "*",
+            "sourceDefinition": {
+                "variableSourceType": "LogQueryVariableSourceDefinition",
+                "query": "_collector=\"GitLab - Sumologic\"\n| json \"project.name\" as repo_name",
+                "field": "repo_name"
+            },
+            "allowMultiSelect": false,
+            "includeAllOption": true,
+            "hideFromUI": false,
+            "valueType": "Any"
+        },
+        {
+            "id": null,
+            "name": "sub_group_1",
+            "displayName": "sub_group_1",
+            "defaultValue": "*",
+            "sourceDefinition": {
+                "variableSourceType": "LogQueryVariableSourceDefinition",
+                "query": "_collector=\"GitLab - Sumologic\"\n| json field=_raw \"project.path_with_namespace\" as group_name\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2 ",
+                "field": "sub_group_1"
+            },
+            "allowMultiSelect": false,
+            "includeAllOption": true,
+            "hideFromUI": false,
+            "valueType": "Any"
+        },
+        {
+            "id": null,
+            "name": "sub_group_2",
+            "displayName": "sub_group_2",
+            "defaultValue": "*",
+            "sourceDefinition": {
+                "variableSourceType": "LogQueryVariableSourceDefinition",
+                "query": "_collector=\"GitLab - Sumologic\"\n| json field=_raw \"project.path_with_namespace\" as group_name\n| split group_name escape='\\',delim='/' extract root_group, sub_group_1, sub_group_2 ",
+                "field": "sub_group_2"
+            },
+            "allowMultiSelect": false,
+            "includeAllOption": true,
+            "hideFromUI": false,
+            "valueType": "Any"
+        }
+    ],
+    "coloringRules": []
+}
